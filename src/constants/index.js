@@ -24,6 +24,8 @@ const APP_EVENTS = {
   addTabs: 'addTabs',
   closeDialog: 'closeDialog',
   desktopCapturerGetSources: 'desktopCapturerGetSources',
+  desktopGetAllDisplays: 'desktopGetAllDisplays',
+  desktopGetPrimaryDisplay: 'desktopGetPrimaryDisplay',
   dictionaryGetMisspelled: 'dictionaryGetMisspelled',
   notificationClick: 'notificationClick',
   reload: 'reload',

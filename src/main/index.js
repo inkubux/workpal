@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {BrowserWindow, Notification, app, desktopCapturer, ipcMain: ipc} = require('electron');
+const {BrowserWindow, Notification, app, desktopCapturer, ipcMain: ipc, screen} = require('electron');
 const {APP_EVENTS} = require('../constants');
 const {TABS_CONTAINER_HEIGHT, initTabContainer} = require('../chrome-tabs');
 const {loadSettings, updateSettings, openSettingsDialog} = require('../settings');
@@ -120,7 +120,25 @@ const initTabListener = () => {
 };
 
 const initDesktopCapturerHandler = () => {
-  ipc.handle(APP_EVENTS.desktopCapturerGetSources, (_event, opts) => desktopCapturer.getSources(opts));
+  ipc.handle(APP_EVENTS.desktopCapturerGetSources, async (_event, opts) => {
+    const sources = await desktopCapturer.getSources(opts);
+    const displays = screen.getAllDisplays();
+    return sources.map(source => {
+      // eslint-disable-next-line no-warning-comments
+      // FIXME On linux the display_id is empty
+      // as a workaround I find the best screen by display ratio
+      // Note that this coulc technically fail but it works for my setup
+      const ratio = parseFloat(source.thumbnail.getAspectRatio()).toPrecision(2);
+
+      const display = displays.find(d => ratio === parseFloat(d.size.width / d.size.height).toPrecision(2));
+      return {...source, display};
+    });
+  });
+};
+
+const initDesktopGetAllDisplays = () => {
+  ipc.handle(APP_EVENTS.desktopGetPrimaryDisplay, () => screen.getPrimaryDisplay());
+  ipc.handle(APP_EVENTS.desktopGetAllDisplays, () => screen.getAllDisplays());
 };
 
 const closeDialog = () => {
@@ -178,8 +196,10 @@ const init = () => {
   mainWindow.on('resize', handleMainWindowResize);
   mainWindow.on('maximize', handleMainWindowResize);
   mainWindow.on('closed', () => app.quit());
+
   initTabListener();
   initDesktopCapturerHandler();
+  initDesktopGetAllDisplays();
   initDialogListeners();
   initBrowserVersions()
     .then(browserVersionsReady)
@@ -190,8 +210,11 @@ const init = () => {
       }).show();
       browserVersionsReady();
     });
-
+  // setTimeout(() => {
+  //   handleMainWindowResize();
+  // }, 300);
   return mainWindow;
 };
+
 
 module.exports = {APP_EVENTS, init};

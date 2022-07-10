@@ -17,6 +17,7 @@ const {ipcRenderer} = require('electron');
 const {h, render} = require('preact');
 const {useEffect, useState} = require('preact/hooks');
 const htm = require('htm');
+const {APP_EVENTS} = require('../constants');
 const html = htm.bind(h);
 
 const ROOT_CLASS = 'electron-desktop-capturer-root';
@@ -26,7 +27,7 @@ const DEFAULT_SOURCES_OPTIONS = {
 
 const desktopCapturer = {
   // eslint-disable-next-line no-undef
-  getSources: opts => ipcRenderer.invoke(APP_EVENTS.desktopCapturerGetSources, opts)
+  getSources: async opts => ipcRenderer.invoke(APP_EVENTS.desktopCapturerGetSources, opts)
 };
 
 let currentRoot = null;
@@ -47,12 +48,18 @@ const getOrCreateRoot = () => {
   return $root;
 };
 
-const stream = async id => window.navigator.mediaDevices.getUserMedia({
+const stream = async (id, display) => window.navigator.mediaDevices.getUserMedia({
   audio: false,
   video: {
     mandatory: {
       chromeMediaSource: 'desktop',
-      chromeMediaSourceId: id
+      chromeMediaSourceId: id,
+      ...(display && {
+        minWidth: display.size.width,
+        minHeight: display.size.height,
+        maxWidth: display.size.width,
+        maxHeight: display.size.height
+      })
     }
   }
 });
@@ -121,11 +128,13 @@ const Style = () => html`
 `;
 
 // eslint-disable-next-line no-unused-vars
-const Source = ({id, name, thumbnail, _display_id, _appIcon, resolve}) => {
+const Source = ({id, name, thumbnail, display, resolve}) => {
   const selectStream = async event => {
     event.preventDefault();
     event.stopPropagation();
-    resolve(await stream(id));
+    const currentStream = await stream(id, display);
+
+    resolve(currentStream);
     removeRoot();
   };
   return html`

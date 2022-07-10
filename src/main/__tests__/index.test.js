@@ -21,6 +21,7 @@ describe('Main module test suite', () => {
   let mockIpc;
   let mockTabContainer;
   let mockSettings;
+  let mockScreen;
   let settingsModule;
   let spellCheckModule;
   let tabManagerModule;
@@ -49,12 +50,17 @@ describe('Main module test suite', () => {
     };
     mockTabContainer = {};
     mockSettings = {};
+    mockScreen = {
+      getAllDisplays: jest.fn(),
+      getPrimaryDisplay: jest.fn()
+    };
     jest.resetModules();
     jest.mock('electron', () => ({
       BrowserWindow: jest.fn(() => mockBrowserWindow),
       Notification: jest.fn(() => mockNotification),
       app: mockApp,
       desktopCapturer: mockDesktopCapturer,
+      screen: mockScreen,
       ipcMain: mockIpc
     }));
     jest.mock('../../chrome-tabs', () => ({
@@ -108,7 +114,7 @@ describe('Main module test suite', () => {
     test('initDesktopCapturerHandler, should regiser desktopCapturer', () => {
       // Given
       const opts = {the: 'opts'};
-      mockDesktopCapturer.getSources = jest.fn();
+      mockDesktopCapturer.getSources = jest.fn().mockReturnValue([]);
       mockIpc.handle.mockImplementation((_channel, listener) => {
         listener.call(null, {}, opts);
       });

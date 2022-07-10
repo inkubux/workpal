@@ -24,4 +24,5 @@ const prepareElectronBuilder = () => {
 };
 
 process.on('unhandledRejection', errorHandler);
+
 prepareElectronBuilder();
