@@ -43,9 +43,9 @@ jobs:
         run: node .\utils\upload-artifact.js workpal-win-x64.zip application/zip
       - name: Upload Portable exe
         run: node .\utils\upload-artifact.js workpal-win-x64.exe application/octet-stream
-      - name: Chocolatey Push
-        run: |
-          powershell
-          choco apikey -k ${{ secrets.CHOCO_API_KEY }} -source https://push.chocolatey.org/
-          choco pack --version=$(node -p "require('./package').version") build-config/workpal.nuspec
-          choco push $(ls *.nupkg | % {$_.FullName}) -s https://push.chocolatey.org/
+      # - name: Chocolatey Push
+      #   run: |
+      #     powershell
+      #     choco apikey -k ${{ secrets.CHOCO_API_KEY }} -source https://push.chocolatey.org/
+      #     choco pack --version=$(node -p "require('./package').version") build-config/workpal.nuspec
+      #     choco push $(ls *.nupkg | % {$_.FullName}) -s https://push.chocolatey.org/
