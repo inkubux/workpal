@@ -44,14 +44,14 @@ jobs:
         run: ./utils/upload-artifact.js workpal-linux-x64.tar.gz application/tar+gzip
       - name: Upload AppImage
         run: ./utils/upload-artifact.js workpal-linux-x86_64.AppImage application/octet-stream
-      - name: Publish Snap
-        run: |
-          sudo apt-get install snapd
-          sudo chown root:root / # Snapcraft requires '/' to be root owned
-          sudo snap install snapcraft --classic
-          echo $SNAPCRAFT_LOGIN | base64 --decode --ignore-garbage > snapcraft.login
-          snapcraft login --with snapcraft.login
-          snapcraft push --release=stable ./dist/workpal-linux-amd64.snap
+      # - name: Publish Snap
+      #   run: |
+      #     sudo apt-get install snapd
+      #     sudo chown root:root / # Snapcraft requires '/' to be root owned
+      #     sudo snap install snapcraft --classic
+      #     echo $SNAPCRAFT_LOGIN | base64 --decode --ignore-garbage > snapcraft.login
+      #     snapcraft login --with snapcraft.login
+      #     snapcraft push --release=stable ./dist/workpal-linux-amd64.snap
   macOS:
     name: macOS Artifact
     runs-on: macos-latest
