@@ -13,12 +13,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-require('../main/preload');
-const {webFrame} = require('electron');
-require('./browser-notification-shim');
-require('./browser-mediadevices-shim');
-const {initKeyboardShortcuts} = require('./browser-keyboard-shortcuts');
-const {initSpellChecker} = require('./browser-spell-check');
+import { IpcRenderer, ipcRenderer } from "electron";
+import { APP_EVENTS, WORKPAL_VERSION } from "../constants";
 
-initKeyboardShortcuts();
-initSpellChecker(webFrame);
+declare global {
+  interface Window {
+    ipcRenderer: IpcRenderer;
+    APP_EVENTS: typeof APP_EVENTS;
+    WORKPAL_VERSION: typeof WORKPAL_VERSION;
+  }
+}
+
+window.ipcRenderer = ipcRenderer;
+window.APP_EVENTS = APP_EVENTS;
+window.WORKPAL_VERSION = WORKPAL_VERSION;

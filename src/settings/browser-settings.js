@@ -14,19 +14,19 @@
    limitations under the License.
  */
 /* eslint-disable no-undef */
-const {h, render} = window.preact;
-const {useReducer} = window.preactHooks;
+const { h, render } = window.preact;
+const { useReducer } = window.preactHooks;
 const html = window.htm.bind(h);
-const settings = () => document.querySelector('.settings');
+const settings = () => document.querySelector(".settings");
 
-const prependProtocol = url => {
+const prependProtocol = (url) => {
   if (url && !url.match(/^https?:\/\/.+/)) {
     return `https://${url}`;
   }
   return url;
 };
 
-const validateUrl = url => {
+const validateUrl = (url) => {
   url = prependProtocol(url);
   if (!url && !url.match(/^https?:\/\/.+/)) {
     return false;
@@ -39,87 +39,103 @@ const validateUrl = url => {
   return false;
 };
 
-const newTabClass = state => {
+const newTabClass = (state) => {
   if (state.newTabValue.length === 0) {
-    return '';
+    return "";
   }
-  return state.newTabValid ? 'is-success' : 'is-danger';
+  return state.newTabValid ? "is-success" : "is-danger";
 };
 
-const newId = () => (
-  new Date().getTime().toString(36) + Math.random().toString(36).slice(2) // NOSONAR
-);
+const newId = () =>
+  new Date().getTime().toString(36) + Math.random().toString(36).slice(2); // NOSONAR
 
 const initialState = {
   dictionaries: window.dictionaries,
   tabs: window.tabs,
   expandedTabs: [],
   newTabValid: false,
-  newTabValue: '',
+  newTabValue: "",
   canSave: window.tabs.length > 0,
-  disableNotificationsGlobally: window.disableNotificationsGlobally
+  disableNotificationsGlobally: window.disableNotificationsGlobally,
 };
 
 const ACTIONS = {
-  ADD: 'ADD',
-  REMOVE: 'REMOVE',
-  TOGGLE_DICTIONARY: 'TOGGLE_DICTIONARY',
-  TOGGLE_TAB_EXPANDED: 'TOGGLE_TAB_EXPANDED',
-  TOGGLE_TAB_PROPERTY: 'TOGGLE_TAB_PROPERTY',
-  TOGGLE_GLOBAL_NOTIFICATIONS: 'TOGGLE_GLOBAL_NOTIFICATIONS',
-  UPDATE_NEW_TAB_VALUE: 'UPDATE_NEW_TAB_VALUE'
+  ADD: "ADD",
+  REMOVE: "REMOVE",
+  TOGGLE_DICTIONARY: "TOGGLE_DICTIONARY",
+  TOGGLE_TAB_EXPANDED: "TOGGLE_TAB_EXPANDED",
+  TOGGLE_TAB_PROPERTY: "TOGGLE_TAB_PROPERTY",
+  TOGGLE_GLOBAL_NOTIFICATIONS: "TOGGLE_GLOBAL_NOTIFICATIONS",
+  UPDATE_NEW_TAB_VALUE: "UPDATE_NEW_TAB_VALUE",
 };
 
-const dictionariesEnabled = state => state.dictionaries.enabled;
-const dictionariesAvailable = state => state.dictionaries.available;
+const dictionariesEnabled = (state) => state.dictionaries.enabled;
+const dictionariesAvailable = (state) => state.dictionaries.available;
 
 const reducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.ADD: {
       if (!validateUrl(state.newTabValue)) {
-        return {...state};
+        return { ...state };
       }
-      return {...state,
+      return {
+        ...state,
         newTabValid: false,
-        newTabValue: '',
-        tabs: [...state.tabs, {
-          id: newId(),
-          sandboxed: false,
-          disableNotifications: false,
-          url: prependProtocol(state.newTabValue)
-        }],
-        canSave: true
+        newTabValue: "",
+        tabs: [
+          ...state.tabs,
+          {
+            id: newId(),
+            sandboxed: false,
+            disableNotifications: false,
+            url: prependProtocol(state.newTabValue),
+          },
+        ],
+        canSave: true,
       };
     }
     case ACTIONS.REMOVE: {
-      return {...state,
-        tabs: state.tabs.filter(tab => tab.id !== action.payload.id),
-        canSave: state.tabs.filter(tab => tab.id !== action.payload.id).length > 0
+      return {
+        ...state,
+        tabs: state.tabs.filter((tab) => tab.id !== action.payload.id),
+        canSave:
+          state.tabs.filter((tab) => tab.id !== action.payload.id).length > 0,
       };
     }
     case ACTIONS.TOGGLE_DICTIONARY: {
-      const newState = {...state};
+      const newState = { ...state };
       if (dictionariesEnabled(newState).includes(action.payload)) {
-        newState.dictionaries.enabled = [...dictionariesEnabled(newState)
-          .filter(key => key !== action.payload)];
+        newState.dictionaries.enabled = [
+          ...dictionariesEnabled(newState).filter(
+            (key) => key !== action.payload
+          ),
+        ];
       } else {
-        newState.dictionaries.enabled = [...dictionariesEnabled(newState), action.payload];
+        newState.dictionaries.enabled = [
+          ...dictionariesEnabled(newState),
+          action.payload,
+        ];
       }
       return newState;
     }
     case ACTIONS.TOGGLE_TAB_EXPANDED: {
       if (state.expandedTabs.includes(action.payload)) {
-        return {...state,
-          expandedTabs: state.expandedTabs.filter(id => id !== action.payload)};
+        return {
+          ...state,
+          expandedTabs: state.expandedTabs.filter(
+            (id) => id !== action.payload
+          ),
+        };
       }
-      return {...state,
-        expandedTabs: [...state.expandedTabs, action.payload]
+      return {
+        ...state,
+        expandedTabs: [...state.expandedTabs, action.payload],
       };
     }
     case ACTIONS.TOGGLE_TAB_PROPERTY: {
-      const newState = {...state, tabs: []};
-      state.tabs.forEach(tab => {
-        const newTab = {...tab};
+      const newState = { ...state, tabs: [] };
+      state.tabs.forEach((tab) => {
+        const newTab = { ...tab };
         if (newTab.id === action.payload.id) {
           newTab[action.payload.property] = !newTab[action.payload.property];
         }
@@ -128,189 +144,264 @@ const reducer = (state, action) => {
       return newState;
     }
     case ACTIONS.TOGGLE_GLOBAL_NOTIFICATIONS: {
-      return {...state,
-        disableNotificationsGlobally: !state.disableNotificationsGlobally
+      return {
+        ...state,
+        disableNotificationsGlobally: !state.disableNotificationsGlobally,
       };
     }
     case ACTIONS.UPDATE_NEW_TAB_VALUE: {
-      return {...state,
+      return {
+        ...state,
         newTabValid: validateUrl(action.payload),
         newTabValue: action.payload,
-        canSave: action.payload.length === 0 && state.tabs.length > 0
+        canSave: action.payload.length === 0 && state.tabs.length > 0,
       };
     }
-    default: return {...state};
+    default:
+      return { ...state };
   }
 };
 
-const toggleTabProperty = (dispatch, property, id) =>
-  () => dispatch({type: ACTIONS.TOGGLE_TAB_PROPERTY, payload: {id, property}});
+const toggleTabProperty = (dispatch, property, id) => () =>
+  dispatch({ type: ACTIONS.TOGGLE_TAB_PROPERTY, payload: { id, property } });
 
-const SettingsButton = ({icon, disabled = false, title, onclick}) => (html`
-  <button class='settings__button button' disabled=${disabled} onclick=${onclick}>
-    <span class='icon is-medium' title='${title}'>
-      <i class='fas ${icon}'></i>
+const SettingsButton = ({ icon, disabled = false, title, onclick }) => html`
+  <button
+    class="settings__button button"
+    disabled=${disabled}
+    onclick=${onclick}
+  >
+    <span class="icon is-medium" title="${title}">
+      <i class="fas ${icon}"></i>
     </span>
   </button>
-`);
+`;
 
-const ExpandButton = ({dispatch, id, expanded = false}) => {
+const ExpandButton = ({ dispatch, id, expanded = false }) => {
   const properties = {
-    icon: expanded ? 'fa-chevron-down' : 'fa-chevron-right',
-    title: expanded ? 'Collapse' : 'Expand (show advanced settings)',
-    onclick: () => dispatch({type: ACTIONS.TOGGLE_TAB_EXPANDED, payload: id})
+    icon: expanded ? "fa-chevron-down" : "fa-chevron-right",
+    title: expanded ? "Collapse" : "Expand (show advanced settings)",
+    onclick: () => dispatch({ type: ACTIONS.TOGGLE_TAB_EXPANDED, payload: id }),
   };
-  return html`
-    <${SettingsButton} ...${properties} />
-  `;
+  return html` <${SettingsButton} ...${properties} /> `;
 };
 
-const Checkbox = ({label, title = '', icon, checked, value, onclick}) => (html`
-  <div class='control'>
-    <label class='checkbox' title=${title}>
-      <input type='checkbox' checked=${checked} title=${title} value=${value} onclick=${onclick} />
-      ${icon && html`<i class='checkbox__icon fas ${icon}'></i>`} ${label} 
+const Checkbox = ({ label, title = "", icon, checked, value, onclick }) => html`
+  <div class="control">
+    <label class="checkbox" title=${title}>
+      <input
+        type="checkbox"
+        checked=${checked}
+        title=${title}
+        value=${value}
+        onclick=${onclick}
+      />
+      ${icon && html`<i class="checkbox__icon fas ${icon}"></i>`} ${label}
     </label>
   </div>
-`);
+`;
 
-const TabAdvancedSettings = (
-  {dispatch, id, disabled = false, sandboxed = false}
-) => (html`
+const TabAdvancedSettings = ({
+  dispatch,
+  id,
+  disabled = false,
+  sandboxed = false,
+}) => html`
   <div class="settings__tab-advanced container">
-    <${Checkbox} label="Disable" checked=${disabled} value=${id}
-      icon=${disabled ? 'fa-eye-slash' : 'fa-eye'}
-      onclick=${toggleTabProperty(dispatch, 'disabled', id)}
+    <${Checkbox}
+      label="Disable"
+      checked=${disabled}
+      value=${id}
+      icon=${disabled ? "fa-eye-slash" : "fa-eye"}
+      onclick=${toggleTabProperty(dispatch, "disabled", id)}
     />
-    <${Checkbox} label="Sandbox" checked=${sandboxed} value=${id}
-      title='Use an isolated/sandboxed session for this tab'
-      icon=${sandboxed ? 'fa-lock' : 'fa-lock-open'}
-      onclick=${toggleTabProperty(dispatch, 'sandboxed', id)}
+    <${Checkbox}
+      label="Sandbox"
+      checked=${sandboxed}
+      value=${id}
+      title="Use an isolated/sandboxed session for this tab"
+      icon=${sandboxed ? "fa-lock" : "fa-lock-open"}
+      onclick=${toggleTabProperty(dispatch, "sandboxed", id)}
     />
   </div>
-`);
+`;
 
-const TabEntry = ({dispatch, id, expanded, url, disableNotifications = false, ...tab}) => (html`
-  <div class='settings__tab ${expanded && 'settings__tab--expanded'} panel-block' data-id=${id}>
-    <div class='settings__tab-main'>
+const TabEntry = ({
+  dispatch,
+  id,
+  expanded,
+  url,
+  disableNotifications = false,
+  ...tab
+}) => html`
+  <div
+    class="settings__tab ${expanded && "settings__tab--expanded"} panel-block"
+    data-id=${id}
+  >
+    <div class="settings__tab-main">
       <${ExpandButton} dispatch=${dispatch} id=${id} expanded=${expanded} />
-      <div class='control'>
-        <input type='text' readonly class='input' name='tabs' value='${url}' />
+      <div class="control">
+        <input type="text" readonly class="input" name="tabs" value="${url}" />
       </div>
-      <${SettingsButton} icon=${disableNotifications ? 'fa-bell-slash' : 'fa-bell'}
-        title=${disableNotifications ? 'Notifications disabled. Click to enable' : 'Notifications enabled. Click to disable'}
-        onclick=${toggleTabProperty(dispatch, 'disableNotifications', id)}
+      <${SettingsButton}
+        icon=${disableNotifications ? "fa-bell-slash" : "fa-bell"}
+        title=${disableNotifications
+          ? "Notifications disabled. Click to enable"
+          : "Notifications enabled. Click to disable"}
+        onclick=${toggleTabProperty(dispatch, "disableNotifications", id)}
       />
-      <${SettingsButton} icon='fa-trash' title='Delete tab'
-        onclick=${() => dispatch({type: ACTIONS.REMOVE, payload: {id}})}
-      /> 
+      <${SettingsButton}
+        icon="fa-trash"
+        title="Delete tab"
+        onclick=${() => dispatch({ type: ACTIONS.REMOVE, payload: { id } })}
+      />
     </div>
-    <${TabAdvancedSettings} dispatch=${dispatch} id=${id} expanded=${expanded}
+    <${TabAdvancedSettings}
+      dispatch=${dispatch}
+      id=${id}
+      expanded=${expanded}
       ...${tab}
     />
   </div>
-`);
+`;
 
-const DictionaryEntry = ({dispatch, dictionaryKey, name, enabled = false}) => (html`
-  <${Checkbox} label=${`${name} (${dictionaryKey})`} checked=${enabled}
+const DictionaryEntry = ({
+  dispatch,
+  dictionaryKey,
+  name,
+  enabled = false,
+}) => html`
+  <${Checkbox}
+    label=${`${name} (${dictionaryKey})`}
+    checked=${enabled}
     value=${dictionaryKey}
-    onclick=${() => dispatch({type: ACTIONS.TOGGLE_DICTIONARY, payload: dictionaryKey})}
+    onclick=${() =>
+      dispatch({ type: ACTIONS.TOGGLE_DICTIONARY, payload: dictionaryKey })}
   />
-`);
+`;
 
 const Settings = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const enabledDictionaries = dictionariesEnabled(state);
   const availableDictionaries = dictionariesAvailable(state);
-  const onNewTabInput = ({target: {value}}) => dispatch({
-    type: ACTIONS.UPDATE_NEW_TAB_VALUE,
-    payload: value
-  });
-  const addTab = () => dispatch({type: ACTIONS.ADD});
-  const onNewKeyDown = ({code}) => {
-    if (code === 'Enter') {
+  const onNewTabInput = ({ target: { value } }) =>
+    dispatch({
+      type: ACTIONS.UPDATE_NEW_TAB_VALUE,
+      payload: value,
+    });
+  const addTab = () => dispatch({ type: ACTIONS.ADD });
+  const onNewKeyDown = ({ code }) => {
+    if (code === "Enter") {
       addTab();
     }
   };
-  const toggleNotifications = () => dispatch({type: ACTIONS.TOGGLE_GLOBAL_NOTIFICATIONS});
-  const save = () => ipcRenderer.send(APP_EVENTS.settingsSave, {
-    tabs: state.tabs,
-    enabledDictionaries,
-    disableNotificationsGlobally: state.disableNotificationsGlobally
-  });
+  const toggleNotifications = () =>
+    dispatch({ type: ACTIONS.TOGGLE_GLOBAL_NOTIFICATIONS });
+  const save = () =>
+    ipcRenderer.send(APP_EVENTS.settingsSave, {
+      tabs: state.tabs,
+      enabledDictionaries,
+      disableNotificationsGlobally: state.disableNotificationsGlobally,
+    });
   const cancel = () => ipcRenderer.send(APP_EVENTS.closeDialog);
   return html`
-  <h1 class="title">Settings</h1>
-  <div class="container">
-    <div class="form">
-      <nav class="panel">
-        <p class="panel-heading">Tabs</p>
-        <div class="settings__new-tab panel-block">
+    <h1 class="title">Settings</h1>
+    <div class="container">
+      <div class="form">
+        <nav class="panel">
+          <p class="panel-heading">Tabs</p>
+          <div class="settings__new-tab panel-block">
+            <div class="control">
+              <input
+                type="text"
+                class="input ${newTabClass(state)}"
+                placeholder="https://web.whatsapp.com"
+                value=${state.newTabValue}
+                oninput=${onNewTabInput}
+                onkeydown=${onNewKeyDown}
+              />
+            </div>
+            <${SettingsButton}
+              icon="fa-plus"
+              onclick=${addTab}
+              disabled=${!state.newTabValid}
+            />
+          </div>
+          <div class="settings__tabs container field">
+            ${state.tabs.map(
+              (tab) => html`
+                <${TabEntry}
+                  dispatch=${dispatch}
+                  expanded=${state.expandedTabs.includes(tab.id)}
+                  ...${tab}
+                />
+              `
+            )}
+          </div>
+        </nav>
+        <nav class="panel">
+          <p class="panel-heading">Spell checker languages</p>
+          <div class="panel-block">
+            <div class="settings__dictionaries container">
+              ${Object.entries(availableDictionaries)
+                .sort(([, { name: name1 }], [, { name: name2 }]) =>
+                  name1.localeCompare(name2)
+                )
+                .map(
+                  ([key, { name }]) => html`
+                    <${DictionaryEntry}
+                      dispatch=${dispatch}
+                      dictionaryKey=${key}
+                      name=${name}
+                      enabled=${enabledDictionaries.includes(key)}
+                    />
+                  `
+                )}
+            </div>
+          </div>
+        </nav>
+        <nav class="panel">
+          <p class="panel-heading">Other</p>
+          <div class="panel-block">
+            <div class="settings__global-notifications container">
+              <${Checkbox}
+                label="Disable notifications globally"
+                icon=${state.disableNotificationsGlobally
+                  ? "fa-bell-slash"
+                  : "fa-bell"}
+                checked=${state.disableNotificationsGlobally}
+                value=${state.disableNotificationsGlobally}
+                onclick=${toggleNotifications}
+              />
+            </div>
+          </div>
+          <div class="panel-block is-italic">
+            Workpal version ${WORKPAL_VERSION}
+          </div>
+        </nav>
+        <div class="field is-grouped">
           <div class="control">
-            <input type="text"
-              class="input ${newTabClass(state)}"
-              placeholder="https://web.whatsapp.com"
-              value=${state.newTabValue}
-              oninput=${onNewTabInput}
-              onkeydown=${onNewKeyDown}
-            />
+            <button
+              class="settings__submit button is-link"
+              disabled=${!state.canSave}
+              onclick=${save}
+            >
+              Ok
+            </button>
           </div>
-          <${SettingsButton} icon='fa-plus' onclick=${addTab} disabled=${!state.newTabValid} /> 
-        </div>
-        <div class="settings__tabs container field">
-          ${state.tabs.map(tab => (html`
-            <${TabEntry}
-              dispatch=${dispatch} expanded=${state.expandedTabs.includes(tab.id)}
-              ...${tab}
-            />
-        `))}
-        </div>
-      </nav>
-      <nav class="panel">
-        <p class="panel-heading">Spell checker languages</p>
-        <div class="panel-block">
-          <div class="settings__dictionaries container">${
-  Object.entries(availableDictionaries)
-    .sort(([, {name: name1}], [, {name: name2}]) => name1.localeCompare(name2))
-    .map(([key, {name}]) => (html`
-      <${DictionaryEntry} dispatch=${dispatch} dictionaryKey=${key} name=${name}
-        enabled=${enabledDictionaries.includes(key)}
-      />
-    `))} 
+          <div class="control">
+            <button
+              class="settings__cancel button is-link is-light"
+              onclick=${cancel}
+            >
+              Cancel
+            </button>
           </div>
-        </div>
-      </nav>
-      <nav class="panel">
-        <p class="panel-heading">Other</p>
-        <div class="panel-block">
-          <div class="settings__global-notifications container">
-            <${Checkbox}
-              label="Disable notifications globally"
-              icon=${state.disableNotificationsGlobally ? 'fa-bell-slash' : 'fa-bell'}
-              checked=${state.disableNotificationsGlobally}
-              value=${state.disableNotificationsGlobally}
-              onclick=${toggleNotifications}
-            />
-          </div>
-        </div>
-        <div class="panel-block is-italic">
-          ElectronIM version ${ELECTRONIM_VERSION}
-        </div>
-      </nav>
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="settings__submit button is-link"
-            disabled=${!state.canSave} onclick=${save}>Ok</button>
-        </div>
-        <div class="control">
-          <button class="settings__cancel button is-link is-light" onclick=${cancel}>
-            Cancel
-          </button>
         </div>
       </div>
     </div>
-  </div>
-`;
+  `;
 };
 
 render(html`<${Settings} />`, settings());
+export {}

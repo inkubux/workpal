@@ -1,18 +1,21 @@
 {
-  "name": "electronim",
-  "version": "0.0.0",
+  "name": "workpal",
+  "version": "0.1.0",
   "description": "Free/Libre open source Electron based multi instant messaging (IM) client.",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "bin": {
-    "electronim": "bin.js"
+    "workpal": "bin.js"
   },
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore .",
+    "clean": "rimraf build/",
+    "copy-files": "copyfiles -a -u 1 \"src/**/*.html\" \"src/**/*.css\" build/",
     "start": "electron .",
+    "start-ts": "pnpm clean && tsc && pnpm copy-files && electron ./build",
     "test": "jest --coverage",
-    "package-linux": "electron-packager . electronim --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=dist",
-    "package-mac": "electron-packager . electronim --overwrite --asar=true --platform=darwin --arch=x64 --prune=true --out=dist",
-    "package-win": "electron-packager . electronim --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=dist --version-string.CompanyName=\"Marc Nuri\" --version-string.FileDescription=ElectronIM --version-string.ProductName=\"ElectronIM\"",
+    "package-linux": "electron-packager . workpal --overwrite --asar=true --platform=linux --arch=x64 --prune=true --out=dist",
+    "package-mac": "electron-packager . workpal --overwrite --asar=true --platform=darwin --arch=x64 --prune=true --out=dist",
+    "package-win": "electron-packager . workpal --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=dist --version-string.CompanyName=\"Marc Nuri\" --version-string.FileDescription=Workpal --version-string.ProductName=\"Workpal\"",
     "build:linux": "electron-builder --linux",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win"
@@ -22,11 +25,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/manusa/electronim.git"
+    "url": "git+https://github.com/inkubux/workpal.git"
   },
   "keywords": [
     "electron",
-    "electronim",
+    "workpal",
     "IM",
     "chat",
     "tabs",
@@ -47,12 +50,12 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/manusa/electronim/issues"
+    "url": "https://github.com/inkubux/workpal/issues"
   },
-  "homepage": "https://github.com/manusa/electronim#readme",
+  "homepage": "https://github.com/inkubux/workpal#readme",
   "build": {
-    "appId": "com.marcnuri.electronim",
-    "productName": "ElectronIM",
+    "appId": "com.marcnuri.workpal",
+    "productName": "Workpal",
     "copyright": "Copyright 2019 Marc Nuri",
     "directories": {
       "output": "dist"
@@ -84,8 +87,8 @@
       ]
     },
     "linux": {
-      "artifactName": "electronim-linux-${arch}.${ext}",
-      "executableName": "electronim",
+      "artifactName": "workpal-linux-${arch}.${ext}",
+      "executableName": "workpal",
       "category": "Network",
       "desktop": {
         "Terminal": "false",
@@ -99,7 +102,7 @@
       ]
     },
     "mac": {
-      "artifactName": "electronim-mac.${ext}",
+      "artifactName": "workpal-mac.${ext}",
       "category": "public.app-category.utilities",
       "target": [
         "dmg",
@@ -109,7 +112,7 @@
       "entitlementsInherit": "build-config/entitlements.mac.plist"
     },
     "dmg": {
-      "title": "ElectronIM",
+      "title": "Workpal",
       "iconSize": 128,
       "contents": [
         {
@@ -127,7 +130,7 @@
       "sign": false
     },
     "win": {
-      "artifactName": "electronim-win-${arch}.${ext}",
+      "artifactName": "workpal-win-${arch}.${ext}",
       "target": [
         "zip",
         "portable"
@@ -148,14 +151,22 @@
   },
   "devDependencies": {
     "@testing-library/dom": "^8.13.0",
+    "@types/electron": "^1.6.10",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "copyfiles": "^2.4.1",
     "electron-builder": "^23.0.3",
     "electron-packager": "^15.5.1",
-    "eslint": "^8.15.0",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^26.2.2",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
     "jest-environment-node": "^28.1.0",
-    "jest-extended": "^2.0.0"
+    "jest-extended": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",

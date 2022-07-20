@@ -55,7 +55,7 @@ describe('Settings module test suite', () => {
       // Then
       expectHomeDirectoryCreated();
       expect(fs.readFileSync).toHaveBeenCalledTimes(1);
-      expect(fs.readFileSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim', 'settings.json'));
+      expect(fs.readFileSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal', 'settings.json'));
       expect(result.tabs).toEqual([]);
       expect(result.enabledDictionaries).toEqual(['en-US']);
     });
@@ -68,7 +68,7 @@ describe('Settings module test suite', () => {
       // Then
       expectHomeDirectoryCreated();
       expect(fs.readFileSync).toHaveBeenCalledTimes(1);
-      expect(fs.readFileSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim', 'settings.json'));
+      expect(fs.readFileSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal', 'settings.json'));
       expect(result.tabs).toEqual([{id: '1'}]);
       expect(result.enabledDictionaries).toEqual(['en-US']);
       expect(result.activeTab).toBe('1');
@@ -93,7 +93,7 @@ describe('Settings module test suite', () => {
       settings.updateSettings({});
       // Then
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim', 'settings.json'),
+      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal', 'settings.json'),
         '{\n  "tabs": [],\n  "enabledDictionaries": [\n    "en-US"\n  ]\n}');
     });
     test('object and saved settings, should overwrite overlapping settings', () => {
@@ -103,7 +103,7 @@ describe('Settings module test suite', () => {
       settings.updateSettings({tabs: [{id: 1337}], activeTab: 1337, otherSetting: '1337'});
       // Then
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim', 'settings.json'),
+      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal', 'settings.json'),
         '{\n  "tabs": [\n    {\n      "id": 1337\n    }\n  ],\n  "enabledDictionaries": [\n    "en-US"\n  ],\n' +
         '  "activeTab": 1337,\n  "otherSetting": "1337"\n}');
     });
@@ -114,7 +114,7 @@ describe('Settings module test suite', () => {
       settings.updateSettings({tabs: [{id: 1337}], activeTab: 31337});
       // Then
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim', 'settings.json'),
+      expect(fs.writeFileSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal', 'settings.json'),
         '{\n  "tabs": [\n    {\n      "id": 1337\n    }\n  ],\n  "enabledDictionaries": [\n    "en-US"\n  ],\n' +
         '  "activeTab": 1337\n}');
     });
@@ -138,6 +138,6 @@ describe('Settings module test suite', () => {
   });
   const expectHomeDirectoryCreated = () => {
     expect(fs.mkdirSync).toHaveBeenCalledTimes(1);
-    expect(fs.mkdirSync).toHaveBeenCalledWith(path.join('$HOME', '.electronim'), {recursive: true});
+    expect(fs.mkdirSync).toHaveBeenCalledWith(path.join('$HOME', '.workpal'), {recursive: true});
   };
 });

@@ -13,11 +13,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const showDialog = (window, browserView) => {
-  window.setBrowserView(browserView);
-  const {width, height} = window.getContentBounds();
-  browserView.setBounds({x: 0, y: 0, width, height});
-  browserView.setAutoResize({width: true, horizontal: true, height: true, vertical: true});
-};
 
-module.exports = {showDialog};
+import preact from "preact";
+import preactHooks from "preact/hooks";
+import htm from "htm";
+
+declare global {
+  interface Window {
+    preact: typeof preact;
+    preactHooks: typeof preactHooks;
+    htm: typeof htm;
+  }
+}
+
+window.preact = preact;
+window.preactHooks = preactHooks;
+window.htm = htm;
+import "../main/preload";

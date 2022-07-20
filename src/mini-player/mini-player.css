@@ -1,0 +1,10 @@
+body {
+    background-color: black;
+    height: 100px;
+    max-height: 100px;
+    overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}

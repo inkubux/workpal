@@ -13,9 +13,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-window.preact = require('preact');
-window.preactHooks = require('preact/hooks');
-window.htm = require('htm');
-require('../main/preload');
+import "../main/preload";
+import { webFrame } from "electron";
+import "./browser-notification-shim";
+import "./browser-mediadevices-shim";
+import "./browser-mediasession-shim";
+import { requestInterval } from "./request-interval";
 
-window.docs = require('./').loadDocs();
+declare global {
+  interface Window {
+    requestInterval: typeof requestInterval;
+    tabId: string;
+  }
+}
+
+import { initKeyboardShortcuts } from "./browser-keyboard-shortcuts";
+import { initSpellChecker } from "./browser-spell-check";
+
+initKeyboardShortcuts();
+initSpellChecker(webFrame);
+
+window.requestInterval = requestInterval;

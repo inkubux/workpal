@@ -13,12 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-describe('Constants module test suite', () => {
+describe("Constants module test suite", () => {
   let constants;
   beforeEach(() => {
-    constants = require('../');
+    constants = require("..");
   });
-  test('module, should reade package.json version', () => {
-    expect(constants.ELECTRONIM_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
+  test("module, should reade package.json version", () => {
+    expect(constants.WORKPAL_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
   });
 });

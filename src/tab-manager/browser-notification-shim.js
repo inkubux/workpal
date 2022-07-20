@@ -1,6 +1,8 @@
 /*
    Copyright 2019 Marc Nuri San Felix
 
+   This file has been converted to typescript
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -17,21 +19,23 @@
 
 // Delegate for Notification API as specified in: https://notifications.spec.whatwg.org/
 
-const {ipcRenderer} = require('electron');
-const {APP_EVENTS} = require('../constants');
+const { ipcRenderer } = require("electron");
+const { APP_EVENTS } = require("../constants");
 
 const NativeNotification = Notification;
 
-const bubbleNotification = () => ipcRenderer.send(APP_EVENTS.notificationClick, {tabId: window.tabId});
+const bubbleNotification = () =>
+  ipcRenderer.send(APP_EVENTS.notificationClick, { tabId: window.tabId });
 
-const canNotify = () => ipcRenderer.sendSync(APP_EVENTS.canNotify, window.tabId);
+const canNotify = () =>
+  ipcRenderer.sendSync(APP_EVENTS.canNotify, window.tabId);
 
-const setDelegateMinimumBehavior = delegate => {
+const setDelegateMinimumBehavior = (delegate) => {
   delegate.onclick = bubbleNotification;
 };
 
 // noinspection JSValidateTypes
-Notification = function() {
+Notification = function () {
   if (canNotify()) {
     const delegate = new NativeNotification(...arguments);
     setDelegateMinimumBehavior(delegate);
@@ -85,7 +89,7 @@ Notification = function() {
         return delegate.onclick;
       },
       set onclick(func) {
-        delegate.onclick = event => {
+        delegate.onclick = (event) => {
           bubbleNotification();
           func(event);
         };
@@ -110,7 +114,7 @@ Notification = function() {
       },
       get close() {
         return delegate.close;
-      }
+      },
     };
   }
   return {};

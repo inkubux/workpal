@@ -13,56 +13,56 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {ipcRenderer} = require('electron');
-const {h, render} = require('preact');
-const {useEffect, useState} = require('preact/hooks');
-const htm = require('htm');
-const {APP_EVENTS} = require('../constants');
+import { ipcRenderer } from "electron";
+import { h, render } from "preact";
+import { useEffect, useState } from "preact/hooks";
+import htm from "htm";
+import { APP_EVENTS } from "../constants";
 const html = htm.bind(h);
 
-const ROOT_CLASS = 'electron-desktop-capturer-root';
+const ROOT_CLASS = "electron-desktop-capturer-root";
 const DEFAULT_SOURCES_OPTIONS = {
-  types: ['screen', 'window']
+  types: ["screen", "window"],
 };
 
 const desktopCapturer = {
   // eslint-disable-next-line no-undef
-  getSources: async opts => ipcRenderer.invoke(APP_EVENTS.desktopCapturerGetSources, opts)
+  getSources: async (opts) =>
+    ipcRenderer.invoke(APP_EVENTS.desktopCapturerGetSources, opts),
 };
-
-let currentRoot = null;
 
 const removeRoot = () => {
   const $root = document.querySelector(`.${ROOT_CLASS}`);
   if ($root) {
-    render(null, $root, currentRoot);
+    render(null, $root);
     $root.remove();
   }
 };
 
 const getOrCreateRoot = () => {
   removeRoot();
-  const $root = document.createElement('div');
+  const $root = document.createElement("div");
   $root.classList.add(ROOT_CLASS);
   document.body.append($root);
   return $root;
 };
 
-const stream = async (id, display) => window.navigator.mediaDevices.getUserMedia({
-  audio: false,
-  video: {
-    mandatory: {
-      chromeMediaSource: 'desktop',
-      chromeMediaSourceId: id,
-      ...(display && {
-        minWidth: display.size.width,
-        minHeight: display.size.height,
-        maxWidth: display.size.width,
-        maxHeight: display.size.height
-      })
-    }
-  }
-});
+const stream = async (id, display) =>
+  (<any>window.navigator).mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      mandatory: {
+        chromeMediaSource: "desktop",
+        chromeMediaSourceId: id,
+        ...(display && {
+          minWidth: display.size.width,
+          minHeight: display.size.height,
+          maxWidth: display.size.width,
+          maxHeight: display.size.height,
+        }),
+      },
+    },
+  });
 
 const Style = () => html`
   <style>
@@ -72,7 +72,7 @@ const Style = () => html`
       left: 0;
       width: 100%;
       height: 100vh;
-      background: rgba(30,30,30,.75);
+      background: rgba(30, 30, 30, 0.75);
       color: #fff;
       z-index: 999999;
     }
@@ -102,13 +102,13 @@ const Style = () => html`
       margin: 6px;
       pointer-events: bounding-box;
       cursor: pointer;
-      background: rgba(30,30,30,.5);
+      background: rgba(30, 30, 30, 0.5);
       padding: 6px;
       border-radius: 3px;
     }
     .${ROOT_CLASS} .${ROOT_CLASS}__source:hover,
     .${ROOT_CLASS} .${ROOT_CLASS}__source:focus {
-      background: rgba(255,255,255,.1);
+      background: rgba(255, 255, 255, 0.1);
     }
     .${ROOT_CLASS} .${ROOT_CLASS}__thumbnail {
       margin: 0 auto;
@@ -128,8 +128,8 @@ const Style = () => html`
 `;
 
 // eslint-disable-next-line no-unused-vars
-const Source = ({id, name, thumbnail, display, resolve}) => {
-  const selectStream = async event => {
+const Source = ({ id, name, thumbnail, display, resolve }) => {
+  const selectStream = async (event) => {
     event.preventDefault();
     event.stopPropagation();
     const currentStream = await stream(id, display);
@@ -139,45 +139,56 @@ const Source = ({id, name, thumbnail, display, resolve}) => {
   };
   return html`
     <div class="${ROOT_CLASS}__source" onclick=${selectStream}>
-      <img class="${ROOT_CLASS}__thumbnail" alt=${id} src=${thumbnail.toDataURL()} />
+      <img
+        class="${ROOT_CLASS}__thumbnail"
+        alt=${id}
+        src=${thumbnail.toDataURL()}
+      />
       <span class="${ROOT_CLASS}__name">${name}</span>
     </div>
   `;
 };
 
-const LoadingSources = ({sources}) => sources === null && html`
-  <div>Loading sources...</div>
-`;
+const LoadingSources = ({ sources }) =>
+  sources === null && html` <div>Loading sources...</div> `;
 
-const NoSourcesFound = ({sources}) => sources !== null && sources.length === 0 &&
-  html`<div>No sources found</div>`;
+const NoSourcesFound = ({ sources }) =>
+  sources !== null && sources.length === 0 && html`<div>No sources found</div>`;
 
-const Container = ({resolve, reject}) => {
-  const [sources, setSources] = useState(null);
-  const updateSourcesFunction = async () => setSources(await desktopCapturer.getSources(DEFAULT_SOURCES_OPTIONS));
+const Container = ({ resolve, reject }) => {
+  const [sources, setSources] = useState([]);
+  const updateSourcesFunction = async () =>
+    setSources(await desktopCapturer.getSources(DEFAULT_SOURCES_OPTIONS));
   useEffect(() => {
     setTimeout(updateSourcesFunction, sources ? 300 : 0);
   }, [sources]);
   const cancel = () => {
-    reject(new Error('Screen share aborted by user'));
+    reject(new Error("Screen share aborted by user"));
     removeRoot();
   };
   return html`
-    <${Style}/>
+    <${Style} />
     <div class="${ROOT_CLASS}__overlay" onclick=${cancel}>
-      <div class="${ROOT_CLASS}__sources" >
-        <${NoSourcesFound} sources=${sources}/>
-        <${LoadingSources} sources=${sources}/>
-        ${sources !== null && sources.map(source => (html`
-          <${Source} resolve=${resolve} ...${source} />
-        `))}
+      <div class="${ROOT_CLASS}__sources">
+        <${NoSourcesFound} sources=${sources} />
+        <${LoadingSources} sources=${sources} />
+        ${sources !== null &&
+        sources.map(
+          (source) => html` <${Source} resolve=${resolve} ...${source} /> `
+        )}
       </div>
     </div>
   `;
 };
 
 const getDisplayMedia = async (resolve, reject) => {
-  currentRoot = render(html`<${Container} resolve=${resolve} reject=${reject}/>`, getOrCreateRoot());
+  render(
+    html`<${Container} resolve=${resolve} reject=${reject} />`,
+    getOrCreateRoot()
+  );
 };
 
-window.navigator.mediaDevices.getDisplayMedia = () => new Promise(getDisplayMedia);
+window.navigator.mediaDevices.getDisplayMedia = () =>
+  new Promise(getDisplayMedia);
+
+console.log(window.navigator.mediaDevices);

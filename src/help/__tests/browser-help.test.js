@@ -32,7 +32,7 @@ describe('Help in Browser test suite', () => {
     window.preactHooks = require('preact/hooks');
     window.htm = require('htm');
     window.APP_EVENTS = {closeDialog: 'close the dialog'};
-    window.ELECTRONIM_VERSION = '1.33.7';
+    window.WORKPAL_VERSION = '1.33.7';
     window.docs = {
       'Setup.md': '<span>Setup guide</span>',
       'Keyboard-shortcuts.md': '<span>Keyboard shortcuts</span>',
@@ -54,7 +54,7 @@ describe('Help in Browser test suite', () => {
   test('render, should show version in footer', () => {
     // Then
     expect(document.querySelector('.documents-footer').innerHTML)
-      .toMatch(/ElectronIM version 1\.33\.7/);
+      .toMatch(/Workpal version 1\.33\.7/);
   });
   describe('Main Button events', () => {
     test('Close should send close dialog event', () => {

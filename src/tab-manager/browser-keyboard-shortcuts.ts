@@ -14,36 +14,42 @@
    limitations under the License.
  */
 /* eslint-disable no-undef */
-const {ipcRenderer} = require('electron');
+import { ipcRenderer } from "electron";
 
 const codeActionMap = {
-  F5: APP_EVENTS.reload
+  F5: APP_EVENTS.reload,
 };
 
 const controlCodeActionMap = {
   r: APP_EVENTS.reload,
   R: APP_EVENTS.reload,
-  '+': APP_EVENTS.zoomIn,
-  '-': APP_EVENTS.zoomOut,
-  0: APP_EVENTS.zoomReset
+  "+": APP_EVENTS.zoomIn,
+  "-": APP_EVENTS.zoomOut,
+  0: APP_EVENTS.zoomReset,
 };
 
 const commandCodeActionMap = {
   r: APP_EVENTS.reload,
-  R: APP_EVENTS.reload
+  R: APP_EVENTS.reload,
 };
 
-const triggerForActionMap = actionMap => key => {
-  if (actionMap[key]) {
-    ipcRenderer.send(actionMap[key]);
-  }
-};
+type ActionMap =
+  | typeof codeActionMap
+  | typeof controlCodeActionMap
+  | typeof commandCodeActionMap;
 
-const initKeyboardShortcuts = () => {
+const triggerForActionMap =
+  (actionMap: ActionMap) => (key: KeyboardEvent["key"]) => {
+    if (actionMap[key]) {
+      ipcRenderer.send(actionMap[key]);
+    }
+  };
+
+export const initKeyboardShortcuts = () => {
   const triggerCodeActionMap = triggerForActionMap(codeActionMap);
   const triggerControlCodeActionMap = triggerForActionMap(controlCodeActionMap);
   const triggerCommandCodeActionMap = triggerForActionMap(commandCodeActionMap);
-  window.addEventListener('keyup', event => {
+  window.addEventListener("keyup", (event) => {
     if (event.ctrlKey === false && event.metaKey === false) {
       triggerCodeActionMap(event.key);
     } else if (event.ctrlKey === true && event.metaKey === false) {
@@ -52,8 +58,8 @@ const initKeyboardShortcuts = () => {
       triggerCommandCodeActionMap(event.key);
     }
   });
-  window.addEventListener('load', () => {
-    document.addEventListener('wheel', event => {
+  window.addEventListener("load", () => {
+    document.addEventListener("wheel", (event) => {
       const ctrlOrCommand = event.ctrlKey || event.metaKey;
       if (ctrlOrCommand && event.deltaY < 0) {
         ipcRenderer.send(APP_EVENTS.zoomIn);
@@ -63,5 +69,3 @@ const initKeyboardShortcuts = () => {
     });
   });
 };
-
-module.exports = {initKeyboardShortcuts};

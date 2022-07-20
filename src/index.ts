@@ -13,7 +13,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-window.preact = require('preact');
-window.preactHooks = require('preact/hooks');
-window.htm = require('htm');
-require('../main/preload');
+import { app } from "electron";
+import main from "./main";
+
+app.name = "Workpal";
+
+app.on("ready", main.init);

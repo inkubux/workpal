@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-const errorHandler = error => {
+const errorHandler = (error) => {
   console.error(error);
   process.exit(1);
 };

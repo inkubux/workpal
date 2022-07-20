@@ -1,6 +1,6 @@
-$packageName = 'electronim'
-$file = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\electronim-win-x64.zip"
-$unzipLocation = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\electronim"
+$packageName = 'workpal'
+$file = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\workpal-win-x64.zip"
+$unzipLocation = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)\workpal"
 
 
 Install-ChocolateyZipPackage  `
@@ -8,4 +8,4 @@ Install-ChocolateyZipPackage  `
     -File $file `
     -UnzipLocation $unzipLocation `
 
-Install-BinFile -Name $packageName -Path 'electronim.exe'
+Install-BinFile -Name $packageName -Path 'workpal.exe'

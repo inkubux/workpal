@@ -13,23 +13,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const preact = require('preact');
-const preactHooks = require('preact/hooks');
-const htm = require('htm');
-require('../main/preload');
-const {AVAILABLE_DICTIONARIES, getEnabledDictionaries} = require('../spell-check');
-const {loadSettings} = require('./');
-
+import preact from "preact";
+import preactHooks from "preact/hooks";
+import htm from "htm";
+import { AVAILABLE_DICTIONARIES, getEnabledDictionaries } from "../spell-check";
+import { loadSettings } from "./";
+import "../main/preload";
 const settings = loadSettings();
+
+const dictionaries = {
+  available: AVAILABLE_DICTIONARIES,
+  enabled: getEnabledDictionaries(),
+};
+
+declare global {
+  interface Window {
+    preact: typeof preact;
+    preactHooks: typeof preactHooks;
+    htm: typeof htm;
+    dictionaries: typeof dictionaries;
+    tabs: typeof settings.tabs;
+    disableNotificationsGlobally: boolean;
+  }
+}
 
 window.preact = preact;
 window.preactHooks = preactHooks;
 window.htm = htm;
-
-window.dictionaries = {
-  available: AVAILABLE_DICTIONARIES,
-  enabled: getEnabledDictionaries()
-};
+window.dictionaries = dictionaries;
 
 window.tabs = [...settings.tabs];
 

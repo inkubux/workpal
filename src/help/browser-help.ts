@@ -13,17 +13,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {APP_EVENTS, ELECTRONIM_VERSION, ipcRenderer, docs} = window;
-const {h, render} = window.preact;
+const { APP_EVENTS, WORKPAL_VERSION, ipcRenderer, docs } = window;
+const { h, render } = window.preact;
 // const {useReducer} = window.preactHooks;
 const html = window.htm.bind(h);
-const helpRoot = () => document.querySelector('.help-root');
+const helpRoot = () => document.querySelector(".help-root");
 
-const Document = ({id}) => html`
+const HelpDocument = ({ id }) => html`
   <a id=${id} />
-  <div dangerouslySetInnerHTML=${{
-    __html: docs[id]
-  }}></div>
+  <div
+    dangerouslySetInnerHTML=${{
+      __html: docs[id],
+    }}
+  ></div>
 `;
 
 const Toc = () => html`
@@ -38,17 +40,15 @@ const Toc = () => html`
 `;
 
 const Footer = () => html`
-  <div class="documents-footer">
-      ElectronIM version ${ELECTRONIM_VERSION}
-  </div>
+  <div class="documents-footer">Workpal version ${WORKPAL_VERSION}</div>
 `;
 
 const Content = () => html`
   <div class="documents-container">
-    <${Document} id="Setup.md"/>
-    <${Document} id="Keyboard-shortcuts.md"/>
-    <${Document} id="Troubleshooting.md"/>
-    <${Footer}/>
+    <${HelpDocument} id="Setup.md" />
+    <${HelpDocument} id="Keyboard-shortcuts.md" />
+    <${HelpDocument} id="Troubleshooting.md" />
+    <${Footer} />
   </div>
 `;
 
@@ -56,20 +56,17 @@ const Toolbar = () => {
   const close = () => ipcRenderer.send(APP_EVENTS.closeDialog);
   return html`
     <div class="toolbar">
-      <button class="button is-link is-light" onclick=${close}>
-        Close
-      </button>
+      <button class="button is-link is-light" onclick=${close}>Close</button>
     </div>
-`;
+  `;
 };
 
-
 const Help = () => html`
-    <div class="help-content">
-      <${Toc} />
-      <${Content} />
-    </div>
-    <${Toolbar} />
-  `;
+  <div class="help-content">
+    <${Toc} />
+    <${Content} />
+  </div>
+  <${Toolbar} />
+`;
 
-render(html`<${Help} />`, helpRoot());
+render(html`<${Help} />`, <HTMLDivElement>helpRoot());

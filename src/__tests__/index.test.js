@@ -34,7 +34,7 @@ describe('Entrypoint test suite', () => {
     // When
     require('../index');
     // Then
-    expect(app.name).toBe('ElectronIM');
+    expect(app.name).toBe('Workpal');
     expect(app.on).toHaveBeenCalledTimes(1);
     expect(app.on). toHaveBeenCalledWith('ready', main.init);
   });

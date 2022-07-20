@@ -16,7 +16,7 @@ name: Publish
 on:
   push:
     tags:
-    - '*'
+      - "*"
 
 jobs:
   linux:
@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: "16.x"
       - name: Install
         run: npm install
       - name: Change Package version
@@ -41,9 +41,9 @@ jobs:
       - name: Build Linux
         run: npm run build:linux
       - name: Upload tar.gz
-        run: ./utils/upload-artifact.js electronim-linux-x64.tar.gz application/tar+gzip
+        run: ./utils/upload-artifact.js workpal-linux-x64.tar.gz application/tar+gzip
       - name: Upload AppImage
-        run: ./utils/upload-artifact.js electronim-linux-x86_64.AppImage application/octet-stream
+        run: ./utils/upload-artifact.js workpal-linux-x86_64.AppImage application/octet-stream
       - name: Publish Snap
         run: |
           sudo apt-get install snapd
@@ -51,7 +51,7 @@ jobs:
           sudo snap install snapcraft --classic
           echo $SNAPCRAFT_LOGIN | base64 --decode --ignore-garbage > snapcraft.login
           snapcraft login --with snapcraft.login
-          snapcraft push --release=stable ./dist/electronim-linux-amd64.snap
+          snapcraft push --release=stable ./dist/workpal-linux-amd64.snap
   macOS:
     name: macOS Artifact
     runs-on: macos-latest
@@ -63,7 +63,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: "16.x"
       - name: Install
         run: npm install
       - name: Change Package version
@@ -73,6 +73,6 @@ jobs:
       - name: Build macOS
         run: npm run build:mac
       - name: Upload dmg
-        run: ./utils/upload-artifact.js electronim-mac.dmg application/octet-stream
+        run: ./utils/upload-artifact.js workpal-mac.dmg application/octet-stream
       - name: Upload tar.gz
-        run: ./utils/upload-artifact.js electronim-mac.tar.gz application/tar+gzip
+        run: ./utils/upload-artifact.js workpal-mac.tar.gz application/tar+gzip

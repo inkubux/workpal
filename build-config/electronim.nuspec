@@ -2,18 +2,18 @@
 <!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
-    <id>electronim</id>
+    <id>workpal</id>
     <version>0.0.0</version>
-    <title>ElectronIM</title>
+    <title>Workpal</title>
     <authors>Marc Nuri</authors>
-    <projectUrl>https://github.com/manusa/electronim</projectUrl>
+    <projectUrl>https://github.com/inkubux/workpal</projectUrl>
     <copyright>2020 Marc Nuri</copyright>
-    <licenseUrl>https://github.com/manusa/electronim/blob/master/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/inkubux/workpal/blob/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/manusa/electronim</projectSourceUrl>
-    <packageSourceUrl>https://github.com/manusa/electronim/tree/master/build-config</packageSourceUrl>
-    <docsUrl>https://github.com/manusa/electronim/blob/master/README.md</docsUrl>
-    <bugTrackerUrl>https://github.com/manusa/electronim/issues</bugTrackerUrl>
+    <projectSourceUrl>https://github.com/inkubux/workpal</projectSourceUrl>
+    <packageSourceUrl>https://github.com/inkubux/workpal/tree/master/build-config</packageSourceUrl>
+    <docsUrl>https://github.com/inkubux/workpal/blob/master/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/inkubux/workpal/issues</bugTrackerUrl>
     <tags>instant-messaging electron multiplatform im multi-platform</tags>
     <summary>Electron based multi IM (Instant Messaging) client - Improve your productivity by combining all your instant messaging applications (or whatever you want) into a single browser (Electron) window.</summary>
     <description>
@@ -23,25 +23,25 @@ Improve your productivity by combining all your instant messaging applications (
 
 ### Features
 
-- ⚛ Multi-platform: ElectronIM is available for Linux 🐧, Mac 🍏 and Windows.
+- ⚛ Multi-platform: Workpal is available for Linux 🐧, Mac 🍏 and Windows.
 - 🌍 Based on Chromium 101
-- 🔔 Desktop notifications: ElectronIM will notify you using your native system notifications.
-- 🧐 Spellchecker: ElectronIM contains spellchecker dictionaries for many languages,
-  if your language is not supported, just [file an issue](https://github.com/manusa/electronim/issues/new).
+- 🔔 Desktop notifications: Workpal will notify you using your native system notifications.
+- 🧐 Spellchecker: Workpal contains spellchecker dictionaries for many languages,
+  if your language is not supported, just [file an issue](https://github.com/inkubux/workpal/issues/new).
 - Supports any web based IM solution
 - Drag-and-drop tab reordering
 - 🔒 Configurable context for tabs (Isolated/sandboxed or shared). i.e. You can have multiple
   tabs/instances of the same service/web application if the context is sandboxed.
 - 🔕 Notifications can be disabled for individual Applications
 - 💤 Notifications can be disabled globally (Do not disturb)
-- ⌨ Keyboard [shortcuts](https://github.com/manusa/electronim/blob/master/docs/Keyboard-shortcuts.md)
+- ⌨ Keyboard [shortcuts](https://github.com/inkubux/workpal/blob/master/docs/Keyboard-shortcuts.md)
 - 🖥️ Screen sharing
 
-Check the GitHub repository (https://github.com/manusa/electronim) for documentation and source code.
+Check the GitHub repository (https://github.com/inkubux/workpal) for documentation and source code.
     </description>
   </metadata>
   <files>
-    <file src="..\dist\electronim-win-x64.zip" target="lib\electronim-win-x64.zip" />
+    <file src="..\dist\workpal-win-x64.zip" target="lib\workpal-win-x64.zip" />
     <file src=".\chocolateyInstall.ps1" target="lib\chocolateyInstall.ps1" />
     <file src=".\chocolateyUninstall.ps1" target="lib\chocolateyUninstall.ps1" />
     <file src=".\VERIFICATION.txt" target="VERIFICATION.txt" />

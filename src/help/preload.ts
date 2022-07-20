@@ -13,9 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {app} = require('electron');
-const main = require('./main');
+import * as docs from "./index";
+window.preact = require("preact");
+window.preactHooks = require("preact/hooks");
+window.htm = require("htm");
+require("../main/preload");
 
-app.name = 'ElectronIM';
+declare global {
+  interface Window {
+    docs: Record<string, string>;
+  }
+}
 
-app.on('ready', main.init);
+window.docs = docs.loadDocs();

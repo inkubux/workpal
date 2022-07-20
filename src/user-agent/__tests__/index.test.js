@@ -59,7 +59,7 @@ describe('User Agent module test suite', () => {
       userAgent.BROWSER_VERSIONS.chromium = null;
       const browserView = {
         webContents: {
-          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
+          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
         }
       };
       // When
@@ -72,7 +72,7 @@ describe('User Agent module test suite', () => {
       userAgent.BROWSER_VERSIONS.chromium = '1337.1337.1337';
       const browserView = {
         webContents: {
-          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
+          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
         }
       };
       // When
@@ -85,7 +85,7 @@ describe('User Agent module test suite', () => {
       userAgent.BROWSER_VERSIONS.chromium = '1337.1337.1337';
       const browserView = {
         webContents: {
-          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
+          userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
         }
       };
       const nonMatchingUrl = 'https://some-url-com/google.com';
@@ -146,7 +146,7 @@ describe('User Agent module test suite', () => {
         userAgent.BROWSER_VERSIONS.firefoxESR = '133.7';
         details = {
           requestHeaders: {
-            'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36'
           }
         };
         userAgent.addUserAgentInterceptor(session);
@@ -167,7 +167,7 @@ describe('User Agent module test suite', () => {
         session.webRequest.onBeforeSendHeaders.mock.calls[0][1](details, callback);
         // Then
         expect(details.requestHeaders['User-Agent'])
-          .toBe('Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36');
+          .toBe('Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/79.0.1337.79 Electron/0.0.99 Safari/537.36');
       });
     });
   });

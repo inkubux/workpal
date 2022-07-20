@@ -43,6 +43,7 @@ window.reloadDictionaries = () => {
     .forEach(dictionaryKey => {
       let dictionary;
       try {
+        // eslint-disable-next-line no-undef
         dictionary = require(`dictionary-${dictionaryKey.toLowerCase()}`);
       } catch (error) {
         // Error is ignored

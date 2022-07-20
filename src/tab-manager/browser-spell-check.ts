@@ -13,9 +13,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {ipcRenderer} = require('electron');
-const {APP_EVENTS, ELECTRONIM_VERSION} = require('../constants');
+/* eslint-disable no-undef */
+import { ipcRenderer, WebFrame } from "electron";
 
-window.ipcRenderer = ipcRenderer;
-window.APP_EVENTS = APP_EVENTS;
-window.ELECTRONIM_VERSION = ELECTRONIM_VERSION;
+export const initSpellChecker = (webFrame: WebFrame) => {
+  webFrame.setSpellCheckProvider(navigator.language, {
+    async spellCheck(words, callback) {
+      const misspelled = await ipcRenderer.invoke(
+        APP_EVENTS.dictionaryGetMisspelled,
+        words
+      );
+      callback(misspelled);
+    },
+  });
+};

@@ -13,209 +13,266 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {createEvent, fireEvent, waitFor} = require('@testing-library/dom');
+const { createEvent, fireEvent, waitFor } = require("@testing-library/dom");
 
 const mockDOM = () => {
-  document.body.innerHTML = '';
-  const $root = document.createElement('div');
+  document.body.innerHTML = "";
+  const $root = document.createElement("div");
   $root.innerHTML = '<div class="tab-container"></div>';
   document.body.append($root);
 };
 
-describe('ChromeTabs in Browser test suite', () => {
+describe("ChromeTabs in Browser test suite", () => {
   let mockIpcRenderer;
   let $chromeTabs;
   beforeEach(() => {
     mockIpcRenderer = {
       events: {},
       on: jest.fn((key, event) => (mockIpcRenderer.events[key] = event)),
-      send: jest.fn()
+      send: jest.fn(),
     };
-    window.preact = require('preact');
-    window.preactHooks = require('preact/hooks');
-    window.htm = require('htm');
+    window.preact = require("preact");
+    window.preactHooks = require("preact/hooks");
+    window.htm = require("htm");
     window.ipcRenderer = mockIpcRenderer;
     window.APP_EVENTS = {
-      activateTab: 'activateTab',
-      activateTabInContainer: 'activateTabInContainer',
-      addTabs: 'addTabs',
-      setTabFavicon: 'setTabFavicon',
-      setTabTitle: 'setTabTitle',
-      tabReorder: 'tabReorder',
-      tabsReady: 'tabsReady'
+      activateTab: "activateTab",
+      activateTabInContainer: "activateTabInContainer",
+      addTabs: "addTabs",
+      setTabFavicon: "setTabFavicon",
+      setTabTitle: "setTabTitle",
+      tabReorder: "tabReorder",
+      tabsReady: "tabsReady",
     };
     mockDOM();
     jest.isolateModules(() => {
-      require('../browser-chrome-tabs');
+      require("../browser-chrome-tabs");
     });
-    $chromeTabs = document.querySelector('.chrome-tabs');
+    $chromeTabs = document.querySelector(".chrome-tabs");
   });
-  test('APP_EVENTS.tabsReady should be fired on load', () => {
-    expect(mockIpcRenderer.send).toHaveBeenCalledWith('tabsReady', {});
+  test("APP_EVENTS.tabsReady should be fired on load", () => {
+    expect(mockIpcRenderer.send).toHaveBeenCalledWith("tabsReady", {});
   });
-  describe('External events (ipcRenderer.on)', () => {
+  describe("External events (ipcRenderer.on)", () => {
     let tabs;
     beforeEach(() => {
-      Object.defineProperty($chromeTabs, 'clientWidth', {value: 100});
-      window.dispatchEvent(new CustomEvent('resize'));
+      Object.defineProperty($chromeTabs, "clientWidth", { value: 100 });
+      window.dispatchEvent(new CustomEvent("resize"));
       tabs = [
-        {id: 1337, active: true, url: 'https://1337.com'},
-        {id: 313373, title: '313373', url: 'https://313373.com'},
-        {id: 13373, favicon: 'https://13373.png', url: 'https://13373.com'}
+        { id: 1337, active: true, url: "https://1337.com" },
+        { id: 313373, title: "313373", url: "https://313373.com" },
+        { id: 13373, favicon: "https://13373.png", url: "https://13373.com" },
       ];
     });
-    test('addTabs, should set tabs', async () => {
+    test("addTabs, should set tabs", async () => {
       // When
       mockIpcRenderer.events.addTabs({}, tabs);
       // Then
       await waitFor(() =>
-        expect($chromeTabs.querySelectorAll('.chrome-tab').length).toBe(3));
-      const $addedTabs = $chromeTabs.querySelectorAll('.chrome-tab');
-      $addedTabs.forEach(tab => expect(tab.style.width).toBe('259px'));
-      expect($addedTabs[0].querySelector('.chrome-tab-title').innerHTML)
-        .toBe('https://1337.com');
-      expect($addedTabs[0].hasAttribute('active')).toBe(true);
-      expect($addedTabs[1].querySelector('.chrome-tab-title').innerHTML)
-        .toBe('313373');
-      expect($addedTabs[1].hasAttribute('active')).toBe(false);
-      expect($addedTabs[2].querySelector('.chrome-tab-favicon').style.backgroundImage)
-        .toBe('url(https://13373.png)');
-      expect(mockIpcRenderer.send).toHaveBeenCalledWith('activateTab', {id: 1337});
+        expect($chromeTabs.querySelectorAll(".chrome-tab").length).toBe(3)
+      );
+      const $addedTabs = $chromeTabs.querySelectorAll(".chrome-tab");
+      $addedTabs.forEach((tab) => expect(tab.style.width).toBe("259px"));
+      expect($addedTabs[0].querySelector(".chrome-tab-title").innerHTML).toBe(
+        "https://1337.com"
+      );
+      expect($addedTabs[0].hasAttribute("active")).toBe(true);
+      expect($addedTabs[1].querySelector(".chrome-tab-title").innerHTML).toBe(
+        "313373"
+      );
+      expect($addedTabs[1].hasAttribute("active")).toBe(false);
+      expect(
+        $addedTabs[2].querySelector(".chrome-tab-favicon").style.backgroundImage
+      ).toBe("url(https://13373.png)");
+      expect(mockIpcRenderer.send).toHaveBeenCalledWith("activateTab", {
+        id: 1337,
+      });
     });
-    test('activateTabInContainer, should change active tab', async () => {
+    test("activateTabInContainer, should change active tab", async () => {
       // Given
       mockIpcRenderer.events.addTabs({}, tabs);
       // When
-      mockIpcRenderer.events.activateTabInContainer({}, {tabId: 313373});
+      mockIpcRenderer.events.activateTabInContainer({}, { tabId: 313373 });
       // Then
       await waitFor(() =>
-        expect($chromeTabs.querySelector('.chrome-tab[data-tab-id="313373"]').hasAttribute('active')).toBe(true));
+        expect(
+          $chromeTabs
+            .querySelector('.chrome-tab[data-tab-id="313373"]')
+            .hasAttribute("active")
+        ).toBe(true)
+      );
     });
-    test('setTabTitle, should change title of specified tab', async () => {
+    test("setTabTitle, should change title of specified tab", async () => {
       // Given
       mockIpcRenderer.events.addTabs({}, tabs);
       // When
-      mockIpcRenderer.events.setTabTitle({}, {id: 313373, title: 'replaced'});
+      mockIpcRenderer.events.setTabTitle({}, { id: 313373, title: "replaced" });
       // Then
-      await waitFor(() => expect(
-        $chromeTabs.querySelector('.chrome-tab[data-tab-id="313373"] .chrome-tab-title').innerHTML)
-        .toBe('replaced'));
+      await waitFor(() =>
+        expect(
+          $chromeTabs.querySelector(
+            '.chrome-tab[data-tab-id="313373"] .chrome-tab-title'
+          ).innerHTML
+        ).toBe("replaced")
+      );
       expect(
-        $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"] .chrome-tab-title').innerHTML)
-        .toBe('https://1337.com');
+        $chromeTabs.querySelector(
+          '.chrome-tab[data-tab-id="1337"] .chrome-tab-title'
+        ).innerHTML
+      ).toBe("https://1337.com");
     });
-    test('setTabFavicon, should change favicon of specified tab', async () => {
+    test("setTabFavicon, should change favicon of specified tab", async () => {
       // Given
       mockIpcRenderer.events.addTabs({}, tabs);
       // When
-      mockIpcRenderer.events.setTabFavicon({}, {id: 313373, favicon: 'https://f/replaced.png'});
+      mockIpcRenderer.events.setTabFavicon(
+        {},
+        { id: 313373, favicon: "https://f/replaced.png" }
+      );
       // Then
-      await waitFor(() => expect(
-        $chromeTabs.querySelector('.chrome-tab[data-tab-id="313373"] .chrome-tab-favicon').style.backgroundImage)
-        .toBe('url(https://f/replaced.png)'));
+      await waitFor(() =>
+        expect(
+          $chromeTabs.querySelector(
+            '.chrome-tab[data-tab-id="313373"] .chrome-tab-favicon'
+          ).style.backgroundImage
+        ).toBe("url(https://f/replaced.png)")
+      );
       expect(
-        $chromeTabs.querySelector('.chrome-tab[data-tab-id="13373"] .chrome-tab-favicon').style.backgroundImage)
-        .toBe('url(https://13373.png)');
+        $chromeTabs.querySelector(
+          '.chrome-tab[data-tab-id="13373"] .chrome-tab-favicon'
+        ).style.backgroundImage
+      ).toBe("url(https://13373.png)");
     });
   });
-  describe('Tab events', () => {
+  describe("Tab events", () => {
     let tabs;
     beforeEach(async () => {
       tabs = [
-        {id: 1337, active: true, url: 'https://1337.com'},
-        {id: 313373, title: '313373', url: 'https://313373.com'},
-        {id: 13373, favicon: 'https://13373.png', url: 'https://13373.com'}
+        { id: 1337, active: true, url: "https://1337.com" },
+        { id: 313373, title: "313373", url: "https://313373.com" },
+        { id: 13373, favicon: "https://13373.png", url: "https://13373.com" },
       ];
-      Object.defineProperty($chromeTabs, 'clientWidth', {value: 100});
-      window.dispatchEvent(new CustomEvent('resize'));
+      Object.defineProperty($chromeTabs, "clientWidth", { value: 100 });
+      window.dispatchEvent(new CustomEvent("resize"));
       mockIpcRenderer.events.addTabs({}, tabs);
       await waitFor(() => {
-        if ($chromeTabs.querySelectorAll('.chrome-tab').length !== 3) {
-          throw Error('Tabs are not ready');
+        if ($chromeTabs.querySelectorAll(".chrome-tab").length !== 3) {
+          throw Error("Tabs are not ready");
         }
       });
     });
-    test('click, on inactive tab, should request tab activation', () => {
+    test("click, on inactive tab, should request tab activation", () => {
       // When
-      fireEvent.click($chromeTabs.querySelector('.chrome-tab[data-tab-id="313373"]'));
+      fireEvent.click(
+        $chromeTabs.querySelector('.chrome-tab[data-tab-id="313373"]')
+      );
       // Then
-      expect(mockIpcRenderer.send).toHaveBeenNthCalledWith(3, 'activateTab', {id: 313373});
+      expect(mockIpcRenderer.send).toHaveBeenNthCalledWith(3, "activateTab", {
+        id: 313373,
+      });
     });
-    test('click, on active tab, should do nothing', () => {
+    test("click, on active tab, should do nothing", () => {
       // When
-      fireEvent.click($chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]'));
+      fireEvent.click(
+        $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]')
+      );
       // Then
       expect(mockIpcRenderer.send).toHaveBeenCalledTimes(2);
     });
-    test('dragOver, should invoke preventDefault to allow drop', () => {
+    test("dragOver, should invoke preventDefault to allow drop", () => {
       // Given
       const event = createEvent.dragOver($chromeTabs);
-      jest.spyOn(event, 'preventDefault');
+      jest.spyOn(event, "preventDefault");
       // When
       fireEvent($chromeTabs, event);
       // Then
       expect(event.preventDefault).toHaveBeenCalledTimes(1);
     });
-    test('dragStart, should activate tab and set initial drag values', () => {
+    test("dragStart, should activate tab and set initial drag values", () => {
       // Given
       const $tab = $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]');
-      const event = new MouseEvent('dragstart', {
-        clientX: 100, clientY: 0});
-      Object.defineProperty(event, 'dataTransfer', {value: {
-        setDragImage: jest.fn()
-      }});
+      const event = new MouseEvent("dragstart", {
+        clientX: 100,
+        clientY: 0,
+      });
+      Object.defineProperty(event, "dataTransfer", {
+        value: {
+          setDragImage: jest.fn(),
+        },
+      });
       // When
       fireEvent($tab, event);
       // Then
-      expect(mockIpcRenderer.send).toHaveBeenCalledWith('activateTab', {id: 1337});
+      expect(mockIpcRenderer.send).toHaveBeenCalledWith("activateTab", {
+        id: 1337,
+      });
       expect(event.dataTransfer.setDragImage).toHaveBeenCalledTimes(1);
     });
-    test('drag, same position, should keep positions moving current tab left', async () => {
+    test("drag, same position, should keep positions moving current tab left", async () => {
       // Given
       const $tab = $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]');
-      const event = new MouseEvent('drag', {clientX: 100, clientY: 1});
+      const event = new MouseEvent("drag", { clientX: 100, clientY: 1 });
       // When
       fireEvent($tab, event);
       // Then
       await waitFor(() =>
-        expect($chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]').style.left).toBe('100px'));
-      expect($chromeTabs.querySelectorAll('.chrome-tab')[0].dataset.tabId).toBe('1337');
+        expect(
+          $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]').style
+            .left
+        ).toBe("100px")
+      );
+      expect($chromeTabs.querySelectorAll(".chrome-tab")[0].dataset.tabId).toBe(
+        "1337"
+      );
     });
-    test('drag, one position right, should switch positions in array', async () => {
+    test("drag, one position right, should switch positions in array", async () => {
       // Given
       const $tab = $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]');
-      const event = new MouseEvent('drag', {clientX: 200, clientY: 1});
+      const event = new MouseEvent("drag", { clientX: 200, clientY: 1 });
       // When
       fireEvent($tab, event);
       // Then
       await waitFor(() =>
-        expect($chromeTabs.querySelectorAll('.chrome-tab')[0].dataset.tabId).toBe('313373'));
-      expect($chromeTabs.querySelectorAll('.chrome-tab')[1].dataset.tabId).toBe('1337');
+        expect(
+          $chromeTabs.querySelectorAll(".chrome-tab")[0].dataset.tabId
+        ).toBe("313373")
+      );
+      expect($chromeTabs.querySelectorAll(".chrome-tab")[1].dataset.tabId).toBe(
+        "1337"
+      );
       expect(mockIpcRenderer.send).toHaveBeenCalledTimes(3);
-      expect(mockIpcRenderer.send).toHaveBeenCalledWith('tabReorder', {tabIds: [313373, 1337, 13373]});
+      expect(mockIpcRenderer.send).toHaveBeenCalledWith("tabReorder", {
+        tabIds: [313373, 1337, 13373],
+      });
     });
-    test('drag, one position right out of window, should leave tabs as before drag started', async () => {
+    test("drag, one position right out of window, should leave tabs as before drag started", async () => {
       // Given
       const $tab = $chromeTabs.querySelector('.chrome-tab[data-tab-id="1337"]');
-      const event = new MouseEvent('drag', {clientX: 200, clientY: -100});
+      const event = new MouseEvent("drag", { clientX: 200, clientY: -100 });
       // When
       fireEvent($tab, event);
       // Then
       await waitFor(() =>
-        expect(mockIpcRenderer.send).toHaveBeenCalledWith('tabReorder', {tabIds: [1337, 313373, 13373]}));
+        expect(mockIpcRenderer.send).toHaveBeenCalledWith("tabReorder", {
+          tabIds: [1337, 313373, 13373],
+        })
+      );
       expect(mockIpcRenderer.send).toHaveBeenCalledTimes(3);
-      expect($chromeTabs.querySelectorAll('.chrome-tab')[0].dataset.tabId).toBe('1337');
+      expect($chromeTabs.querySelectorAll(".chrome-tab")[0].dataset.tabId).toBe(
+        "1337"
+      );
     });
   });
-  describe('Main button events', () => {
-    test('settingsButton click, should dispatch APP_EVENTS.settingsOpenDialog', () => {
+  describe("Main button events", () => {
+    test("settingsButton click, should dispatch APP_EVENTS.settingsOpenDialog", () => {
       // Given
-      window.APP_EVENTS.settingsOpenDialog = 'open your settings please';
+      window.APP_EVENTS.settingsOpenDialog = "open your settings please";
       // When
-      fireEvent.click(document.querySelector('.settings__button'));
+      fireEvent.click(document.querySelector(".settings__button"));
       // Then
-      expect(mockIpcRenderer.send).toHaveBeenCalledWith('open your settings please');
+      expect(mockIpcRenderer.send).toHaveBeenCalledWith(
+        "open your settings please"
+      );
     });
   });
 });
-

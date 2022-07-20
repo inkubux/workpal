@@ -13,10 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-const {shell} = require('electron');
+import { shell } from "electron";
 
-const matchUrls = regexList => (browserViewUrl, url) =>
-  regexList.some(regex => browserViewUrl.href.match(regex) || url.href.match(regex));
+const matchUrls = (regexList) => (browserViewUrl, url) =>
+  regexList.some(
+    (regex) => browserViewUrl.href.match(regex) || url.href.match(regex)
+  );
 
 const isOAuth = matchUrls([
   /^https:\/\/.+\.google\.com\/o\/oauth2\/.*/, // NOSONAR
@@ -33,14 +35,15 @@ const isOAuth = matchUrls([
   /^https:\/\/idbroker\.webex\.com\/idb\/oauth2\/.*/, // NOSONAR
   /^https:\/\/.+\.twitter\.com\/login.*/, // NOSONAR
   /^https:\/\/.+\.twitter\.com\/logout.*/, // NOSONAR
-  /^https:\/\/.+\.zoom\.us\/profile.*/ // NOSONAR
+  /^https:\/\/.+\.zoom\.us\/profile.*/, // NOSONAR
 ]);
 
-const isSameOrigin = (browserViewUrl, url) => url.origin === browserViewUrl.origin;
+const isSameOrigin = (browserViewUrl, url) =>
+  url.origin === browserViewUrl.origin;
 
 const shouldOpenInExternalBrowser = (browserView, url) => {
   let ret = true;
-  [isSameOrigin, isOAuth].forEach(f => {
+  [isSameOrigin, isOAuth].forEach((f) => {
     if (ret && f(new URL(browserView.webContents.getURL()), url)) {
       ret = false;
     }
@@ -48,7 +51,7 @@ const shouldOpenInExternalBrowser = (browserView, url) => {
   return ret;
 };
 
-const handleRedirect = browserView => (e, urlString) => {
+const handleRedirect = (browserView) => (e, urlString) => {
   const url = new URL(urlString);
   if (shouldOpenInExternalBrowser(browserView, url)) {
     e.preventDefault();
@@ -56,6 +59,4 @@ const handleRedirect = browserView => (e, urlString) => {
   }
 };
 
-module.exports = {
-  handleRedirect, shouldOpenInExternalBrowser
-};
+export { handleRedirect, shouldOpenInExternalBrowser };

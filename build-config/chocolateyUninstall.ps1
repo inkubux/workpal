@@ -1,3 +1,3 @@
-$packageName = 'electronim'
+$packageName = 'workpal'
 
-Uninstall-BinFile -Name $packageName -Path 'electronim.exe'
+Uninstall-BinFile -Name $packageName -Path 'workpal.exe'

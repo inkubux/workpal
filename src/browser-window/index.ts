@@ -1,3 +1,5 @@
+import { BrowserView, BrowserWindow } from "electron";
+
 /*
    Copyright 2019 Marc Nuri San Felix
 
@@ -13,16 +15,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-/* eslint-disable no-undef */
-const {ipcRenderer} = require('electron');
-
-const initSpellChecker = webFrame => {
-  webFrame.setSpellCheckProvider(navigator.language, {
-    async spellCheck (words, callback) {
-      const misspelled = await ipcRenderer.invoke(APP_EVENTS.dictionaryGetMisspelled, words);
-      callback(misspelled);
-    }
+export const showDialog = (window: BrowserWindow, browserView: BrowserView) => {
+  window.setBrowserView(browserView);
+  const { width, height } = window.getContentBounds();
+  browserView.setBounds({ x: 0, y: 0, width, height });
+  browserView.setAutoResize({
+    width: true,
+    horizontal: true,
+    height: true,
+    vertical: true,
   });
 };
-
-module.exports = {initSpellChecker};

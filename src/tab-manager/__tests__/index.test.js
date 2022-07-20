@@ -27,7 +27,7 @@ describe('Tab Manager module test suite', () => {
         executeJavaScript: jest.fn(),
         on: jest.fn(),
         loadURL: jest.fn(),
-        userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) ElectronIM/13.337.0 Chrome/WillBeReplacedByLatestChromium Electron/0.0.99 Safari/537.36',
+        userAgent: 'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/1337.36 (KHTML, like Gecko) Workpal/13.337.0 Chrome/WillBeReplacedByLatestChromium Electron/0.0.99 Safari/537.36',
         destroy: jest.fn()
       }
     };
