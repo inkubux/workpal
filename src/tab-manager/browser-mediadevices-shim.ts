@@ -13,7 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-import { ipcRenderer } from "electron";
+import {
+  DesktopCapturerSource,
+  Display,
+  ipcRenderer,
+  SourcesOptions,
+} from "electron";
 import { h, render } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import htm from "htm";
@@ -27,7 +32,9 @@ const DEFAULT_SOURCES_OPTIONS = {
 
 const desktopCapturer = {
   // eslint-disable-next-line no-undef
-  getSources: async (opts) =>
+  getSources: async (
+    opts: SourcesOptions
+  ): Promise<[Electron.DesktopCapturerSource, Electron.Display][]> =>
     ipcRenderer.invoke(APP_EVENTS.desktopCapturerGetSources, opts),
 };
 
@@ -47,7 +54,7 @@ const getOrCreateRoot = () => {
   return $root;
 };
 
-const stream = async (id, display) =>
+const stream = async (id: string, display: Display) =>
   (<any>window.navigator).mediaDevices.getUserMedia({
     audio: false,
     video: {
@@ -156,7 +163,9 @@ const NoSourcesFound = ({ sources }) =>
   sources !== null && sources.length === 0 && html`<div>No sources found</div>`;
 
 const Container = ({ resolve, reject }) => {
-  const [sources, setSources] = useState([]);
+  const [sources, setSources] = useState<[DesktopCapturerSource, Display][]>(
+    []
+  );
   const updateSourcesFunction = async () =>
     setSources(await desktopCapturer.getSources(DEFAULT_SOURCES_OPTIONS));
   useEffect(() => {
@@ -174,21 +183,20 @@ const Container = ({ resolve, reject }) => {
         <${LoadingSources} sources=${sources} />
         ${sources !== null &&
         sources.map(
-          (source) => html` <${Source} resolve=${resolve} ...${source} /> `
+          ([source, display]) =>
+            html`
+              <${Source} resolve=${resolve} ...${source} display=${display} />
+            `
         )}
       </div>
     </div>
   `;
 };
 
-const getDisplayMedia = async (resolve, reject) => {
-  render(
-    html`<${Container} resolve=${resolve} reject=${reject} />`,
-    getOrCreateRoot()
-  );
-};
-
 window.navigator.mediaDevices.getDisplayMedia = () =>
-  new Promise(getDisplayMedia);
-
-console.log(window.navigator.mediaDevices);
+  new Promise((resolve, reject) => {
+    render(
+      html`<${Container} resolve=${resolve} reject=${reject} />`,
+      getOrCreateRoot()
+    );
+  });

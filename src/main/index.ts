@@ -166,7 +166,7 @@ const initDesktopCapturerHandler = () => {
       const display = displays.find(
         (d) => ratio === (d.size.width / d.size.height).toPrecision(2)
       );
-      return { ...source, display };
+      return [source, display];
     });
   });
 };
